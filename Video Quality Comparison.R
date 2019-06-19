@@ -2,6 +2,10 @@ require(caTools)
 
 dataset <- read.csv('Dataset-G1.csv', sep = ';', stringsAsFactors = F, dec = ',')
 
+## Functions
+rsq <- function(x, y) cor(x, y)^2
+rmse <- function(x, y) sqrt(mean((x-y)^2))
+
 # Split the Data Set into train and test parts
 set.seed(2019) # seed for the random number generator
 sampl <- sample.split(dataset$PID, SplitRatio = 0.8)
@@ -78,36 +82,38 @@ sink()
 br_fr_res_test <- data.frame(br=br_test, fr=fr_test, res=res_test)
 frag_disc_uncl_test <- data.frame(frag=frag_test, disc=disc_test, uncl=uncl_test)
 
-# Model that is created with independent vars
+# Video Quality Model that is created with independent vars
 pred_vid_qual_with_ind_vars <- predict(vid_qual_br_fr_res, br_fr_res_test)
-actuals_preds_vid_qual_with_ind_vars <- data.frame(cbind(actuals=vq_test, predicteds=pred_vid_qual_with_ind_vars))
-cor_vid_qual_with_ind_vars <- cor(actuals_preds_vid_qual_with_ind_vars$actuals, actuals_preds_vid_qual_with_ind_vars$predicteds)
-rsq_vid_qual_with_ind_vars <- rsq(actuals_preds_vid_qual_with_ind_vars$actuals, actuals_preds_vid_qual_with_ind_vars$predicteds)
-rmse_vid_qual_with_ind_vars <- rmse(actuals_preds_vid_qual_with_ind_vars$actuals, actuals_preds_vid_qual_with_ind_vars$predicteds)
+comp_ind <- data.frame(cbind(actuals=vq_test, predicteds=pred_vid_qual_with_ind_vars))
+cor_ind <- cor(comp_ind$actuals, comp_ind$predicteds)
+rsq_ind <- rsq(comp_ind$actuals, comp_ind$predicteds)
+rmse_ind <- rmse(comp_ind$actuals, comp_ind$predicteds)
 
-# Model that is created with dependent vars
-pred_vid_qual_with_dep_vars <- predict(vid_qual_frag_disc_uncl, frag_disc_uncl_test)
-actuals_preds_vid_qual_with_dep_vars <- data.frame(cbind(actuals=vq_test, predicteds=pred_vid_qual_with_dep_vars))
-cor_vid_qual_with_dep_vars <- cor(actuals_preds_vid_qual_with_dep_vars$actuals, actuals_preds_vid_qual_with_dep_vars$predicteds)
-rsq_vid_qual_with_dep_vars <- rsq(actuals_preds_vid_qual_with_dep_vars$actuals, actuals_preds_vid_qual_with_dep_vars$predicteds)
-rmse_vid_qual_with_dep_vars <- rmse(actuals_preds_vid_qual_with_dep_vars$actuals, actuals_preds_vid_qual_with_dep_vars$predicteds)
+# BURDA TNAIMLANAN MODELE IHTIYAC YOK GALIBA, CUNKU VIDEO KALITESI BAGIMSIZ DEGISKENLERDEN ELDE EDILIYO OLMASI GEREK
+# Video Quality Model that is created with dependent vars
+# pred_vid_qual_with_dep_vars <- predict(vid_qual_frag_disc_uncl, frag_disc_uncl_test)
+# actuals_preds_vid_qual_with_dep_vars <- data.frame(cbind(actuals=vq_test, predicteds=pred_vid_qual_with_dep_vars))
+# cor_vid_qual_with_dep_vars <- cor(actuals_preds_vid_qual_with_dep_vars$actuals, actuals_preds_vid_qual_with_dep_vars$predicteds)
+# rsq_vid_qual_with_dep_vars <- rsq(actuals_preds_vid_qual_with_dep_vars$actuals, actuals_preds_vid_qual_with_dep_vars$predicteds)
+# rmse_vid_qual_with_dep_vars <- rmse(actuals_preds_vid_qual_with_dep_vars$actuals, actuals_preds_vid_qual_with_dep_vars$predicteds)
 
-# Model that is created with hybrid technique
+# Video Quality Model that is created with hybrid technique
 pred_vid_qual_with_both <- predict(vid_qual_with_predicted_frag_disc_uncl,  data.frame(predicted_frag=frag_disc_uncl_test$frag, predicted_disc=frag_disc_uncl_test$disc, predicted_uncl=frag_disc_uncl_test$uncl))
-actuals_preds_vid_qual_with_both <- data.frame(cbind(actuals=vq_test, predicteds=pred_vid_qual_with_both))
-cor_vid_qual_with_both <- cor(actuals_preds_vid_qual_with_both$actuals, actuals_preds_vid_qual_with_both$predicteds)
-rsq_vid_qual_with_both <- rsq(actuals_preds_vid_qual_with_both$actuals, actuals_preds_vid_qual_with_both$predicteds)
-rmse_vid_qual_with_both <-rmse(actuals_preds_vid_qual_with_both$actuals, actuals_preds_vid_qual_with_both$predicteds)
+comp_both <- data.frame(cbind(actuals=vq_test, predicteds=pred_vid_qual_with_both))
+cor_both <- cor(comp_both$actuals, comp_both$predicteds)
+rsq_both <- rsq(comp_both$actuals, comp_both$predicteds)
+rmse_both <-rmse(comp_both$actuals, comp_both$predicteds)
 
 
 # Visualising the data
-a <- c(ind=cor_vid_qual_with_ind_vars, dep=cor_vid_qual_with_dep_vars, both=cor_vid_qual_with_both)
-hist(a, breaks = 5)
-plot(a)
+result_cor <- c(ind=cor_ind, both=cor_both)
+result_rmse <- c(rmse_ind, rmse_both)
+result_rsq <- c(rsq_ind, rsq_both)
 
-## Functions
-rsq <- function(x, y) cor(x, y)^2
-rmse <- function(x, y) sqrt(mean((x-y)^2))
+hist(result_cor, breaks = 10)
+hist(result_rmse, breaks = 5)
+hist(result_rsq, breaks = 5)
+
 
 
 
