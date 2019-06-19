@@ -1,4 +1,5 @@
 require(caTools)
+require(ggplot2)
 
 dataset <- read.csv('Dataset-G1.csv', sep = ';', stringsAsFactors = F, dec = ',')
 
@@ -106,18 +107,31 @@ rmse_both <-rmse(comp_both$actuals, comp_both$predicteds)
 
 
 # Visualising the data
-result_cor <- c(ind=cor_ind, both=cor_both)
-result_rmse <- c(rmse_ind, rmse_both)
-result_rsq <- c(rsq_ind, rsq_both)
+direct <- c(cor_ind, rmse_ind, rsq_ind)
+indirect <- c(cor_both, rmse_both, rsq_both)
 
-hist(result_cor, breaks = 10)
-hist(result_rmse, breaks = 5)
-hist(result_rsq, breaks = 5)
+col.1 <- c(cor_ind, cor_both)
+col.2 <- c(rmse_ind, rmse_both)
+col.3 <- c(rsq_ind, rsq_both)
+
+matr <- matrix(c(col.1, col.2, col.3), nrow = 2, ncol = 3)
+colnames(matr) <- c("Correlation", "RMSE", "RSQ")
+rownames(matr) <- c("Direct", "Indirect")
+
+bp <- barplot(matr, beside = T, legend.text = rownames(matr), ylim = c(0, max(matr)+0.5), col = c('#77E3C4', '#FFAF7B'))
+# bp
+# legend(x=max(matr)-0.2, y=max(matr)-0.2, legend = rownames(matr))
+# text(x=bp, label = matr)
 
 
+# bp <- ggplot(data = matr, aes(matr$direct, matr$indirect))+
+#   geom_bar(stat = 'identity')
+# bp
 
-
-
+# bp <- ggplot(data = matr, aes(Direct, Indirect))+
+#   geom_bar(stat = 'identity')+
+#   coord_flip()
+# bp
 
 
 
