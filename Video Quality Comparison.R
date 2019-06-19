@@ -71,7 +71,7 @@ sink()
 br_fr_res <- data.frame(br=br, fr=fr, res=res) # Create the data frame to use in the predict function
 predicted_frag <- predict.lm(frag_br_fr_res, br_fr_res)
 predicted_disc <- predict.lm(disc_br_fr_res, br_fr_res)
-predicted_uncl <- predict.glm(uncl_br_fr_res, br_fr_res)
+predicted_uncl <- predict.lm(uncl_br_fr_res, br_fr_res)
 
 vid_qual_with_predicted_frag_disc_uncl <- lm(vq ~ predicted_frag + predicted_disc + predicted_uncl)
 sink('~/Desktop/vid_qual_with_predicted_frag_disc_uncl.txt')
@@ -119,19 +119,48 @@ colnames(matr) <- c("Correlation", "RMSE", "RSQ")
 rownames(matr) <- c("Direct", "Indirect")
 
 bp <- barplot(matr, beside = T, legend.text = rownames(matr), ylim = c(0, max(matr)+0.5), col = c('#77E3C4', '#FFAF7B'))
+
 # bp
 # legend(x=max(matr)-0.2, y=max(matr)-0.2, legend = rownames(matr))
 # text(x=bp, label = matr)
 
+cols <- c("Direct", "Indirect", "Var")
+row.1 <- c(cor_ind, cor_both, "Correlation")
+row.2 <- c(rmse_ind, rmse_both, "RMSE")
+row.3 <- c(rsq_ind, rsq_both, "RSQ")
 
-# bp <- ggplot(data = matr, aes(matr$direct, matr$indirect))+
-#   geom_bar(stat = 'identity')
-# bp
+df <- t(matrix(c(row.1, row.2, row.3), nrow = 3, ncol = 3))
+colnames(df) <- cols
+df <- data.frame(df)
+bp <- ggplot(data = df,
+             aes(x=df$Var,
+                 y=df$Direct,
+                 fill=colnames(df)))+
+  geom_bar(stat = 'identity')
+bp
 
-# bp <- ggplot(data = matr, aes(Direct, Indirect))+
-#   geom_bar(stat = 'identity')+
-#   coord_flip()
-# bp
+## Ikinci deneme
+col.1 <- c("Direct", "Direct", "Direct", "Indirect", "Indirect", "Indirect")
+col.2 <- c(cor_ind, rsq_ind, rmse_ind, cor_both, rsq_both, rmse_both)
+col.3 <- c("Correlation", "RSQ", "RMSE", "Correlation", "RSQ", "RMSE")
+
+df1 <-  matrix(c(col.1,round(col.2, 2), col.3), nrow = 6, ncol = 3) 
+colnames(df1) <- c("Dir_Indir", "Val", "Type")
+df1 <- data.frame(df1)
+bp1 <- ggplot(data=df1,
+              aes(x=df1$Type,
+                  y=df1$Val,
+                  # y=as.factor(seq(0.0, 1.0, length.out = nrow(df1))),
+                  fill=df1$Dir_Indir))+
+  geom_bar(stat='identity', position = position_dodge(), color='black')+
+  geom_text(aes(label=df1$Val), color='black', position = position_dodge(0.9), size=4.5)+
+  theme_minimal() +
+  # coord_fixed(ratio = 0.2) +
+  scale_fill_manual(values = c('#77E3C4', '#FFAF7B'))
+bp1
+
+ggsave('~/Desktop/cor_rmse_rsq.png')
+
 
 
 
