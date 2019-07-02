@@ -181,22 +181,12 @@ cor_ind <- cor(comp_ind$actuals, comp_ind$predicteds)
 rsq_ind <- rsq(comp_ind$actuals, comp_ind$predicteds)
 rmse_ind <- rmse(comp_ind$actuals, comp_ind$predicteds)
 
-# BURDA TNAIMLANAN MODELE IHTIYAC YOK GALIBA, CUNKU VIDEO KALITESI BAGIMSIZ DEGISKENLERDEN ELDE EDILIYO OLMASI GEREK
-# Video Quality Model that is created with dependent vars
-# pred_vid_qual_with_dep_vars <- predict(vid_qual_frag_disc_uncl, frag_disc_uncl_test)
-# actuals_preds_vid_qual_with_dep_vars <- data.frame(cbind(actuals=vq_test, predicteds=pred_vid_qual_with_dep_vars))
-# cor_vid_qual_with_dep_vars <- cor(actuals_preds_vid_qual_with_dep_vars$actuals, actuals_preds_vid_qual_with_dep_vars$predicteds)
-# rsq_vid_qual_with_dep_vars <- rsq(actuals_preds_vid_qual_with_dep_vars$actuals, actuals_preds_vid_qual_with_dep_vars$predicteds)
-# rmse_vid_qual_with_dep_vars <- rmse(actuals_preds_vid_qual_with_dep_vars$actuals, actuals_preds_vid_qual_with_dep_vars$predicteds)
-
 # Video Quality Model that is created with hybrid technique
 pred_vid_qual_with_both <- predict(vid_qual_with_predicted_frag_disc_uncl,  data.frame(predicted_frag=frag_disc_uncl_test$frag, predicted_disc=frag_disc_uncl_test$disc, predicted_uncl=frag_disc_uncl_test$uncl))
 comp_both <- data.frame(cbind(actuals=vq_test, predicteds=pred_vid_qual_with_both))
 cor_both <- cor(comp_both$actuals, comp_both$predicteds)
 rsq_both <- rsq(comp_both$actuals, comp_both$predicteds)
 rmse_both <-rmse(comp_both$actuals, comp_both$predicteds)
-
-
 
 
 # VISUALISING THE DATA
@@ -268,104 +258,3 @@ save_the_plot(res_vals, 'res_vals')
 # disc_br_fr_res
 # uncl_br_fr_res
 # sink()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
